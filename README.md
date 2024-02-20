@@ -1,35 +1,30 @@
 
 # TobDo-List Minimalistic
 
-TobDo-List es una aplicación de gestión de tareas que ofrece una experiencia completa para organizar tu día de manera eficiente. Diseñada con simplicidad y funcionalidad en mente, la aplicación proporciona las siguientes características clave:
+TobDo-List is a task management application that provides a comprehensive experience for efficiently organizing your day. Designed with simplicity and functionality in mind, the application offers the following key features:
 
-Vista de Tareas:
+Task View:
 
-Presenta una lista clara y organizada de tus tareas pendientes, facilitando la rápida visualización de lo que necesitas hacer.
+Presents a clear and organized list of your pending tasks, facilitating quick visualization of what needs to be done.
+Add, Edit, and Delete Tasks:
 
-Agregar, Editar y Eliminar Tareas:
+Allows you to easily add new tasks, edit existing details, and delete tasks that have already been completed.
+Integrated Notifications:
 
-Permite agregar nuevas tareas fácilmente, editar los detalles existentes y eliminar aquellas que ya has completado.
+Includes a notification system that alerts you at specific times, reminding you of tasks scheduled for that moment. Never forget an important task again.
+Intuitive Interface:
 
-Notificaciones Integradas:
+Provides an intuitive and user-friendly interface, making navigation and use of all features easy.
+Data Persistence:
 
-Incluye un sistema de notificaciones que te alerta en momentos específicos, recordándote las tareas programadas para ese momento. Nunca más olvides una tarea importante.
+Uses AsyncStorage to ensure that your tasks are securely stored on the device, even after closing the application.
+Technologies Used:
 
-Interfaz Intuitiva:
-
-Ofrece una interfaz de usuario intuitiva y amigable, facilitando la navegación y el uso de todas las funciones.
-
-Persistencia de Datos:
-
-Utiliza AsyncStorage para garantizar que tus tareas se almacenen de manera segura en el dispositivo, incluso después de cerrar la aplicación.
-
-Tecnologías Utilizadas:
-
-React Native: Desarrollada utilizando React Native para permitir una experiencia de usuario consistente en plataformas iOS y Android.
-Redux: Implementa la gestión del estado con Redux para un flujo de datos eficiente y predecible.
-AsyncStorage: Almacena de manera persistente las tareas en el dispositivo.
-Sistema de Notificaciones: Incorpora un sistema de notificaciones para recordatorios oportunos.
-Con TobDo-List, simplifica tu vida diaria manteniendo tus tareas organizadas y asegurándote de que nunca te pierdas un plazo importante. ¡Descarga la aplicación ahora y lleva la productividad a un nuevo nivel!
+React Native: Developed using React Native to enable a consistent user experience on iOS and Android platforms.
+Redux: Implements state management with Redux for an efficient and predictable data flow.
+AsyncStorage: Persists tasks on the device for reliable storage.
+Notification System: Incorporates a notification system for timely reminders.
+With TobDo-List, simplify your daily life by keeping your tasks organized and ensuring you never miss an important deadline. Download the app now and take productivity to a new level!
 
 
 ## Authors
