@@ -15,6 +15,7 @@ const AddTodo = () => {
   const [withAlert, setWithAlert] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
 
+  const darkMode = useSelector((state) => state.profile.darkMode);
   const listTodos = useSelector(state => state.todos.todos)
   const dispatch = useDispatch();
   const addTodo = async () =>{
@@ -64,12 +65,12 @@ const AddTodo = () => {
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Add Task</Text>
+    <View style={[styles.container, {backgroundColor: darkMode? '#141414' : 'white'}]}>
+      <Text style={[styles.title, {color: darkMode? 'white' : 'black'}]}>Add Task</Text>
       <View style={styles.inputContainer}>
-        <Text style={styles.inputTitle}>Name</Text>
+        <Text style={[styles.inputTitle, {color: darkMode? 'white' : 'black'}]}>Name</Text>
         <TextInput
-          style={styles.textInput}
+          style={[styles.textInput, {color: darkMode? 'white' : 'black'}]}
           placeholder="Task"
           placeholderTextColor="#00000030"
           onChangeText={(text) => {
@@ -78,36 +79,38 @@ const AddTodo = () => {
         />
       </View>
       <View style={styles.inputContainer}>
-        <Text style={styles.inputTitle}>Hour</Text>
+        <Text style={[styles.inputTitle, {color: darkMode? 'white' : 'black'}]}>Hour</Text>
         <TouchableOpacity onPress={showDatepicker}>
           <Text>{date.toLocaleTimeString()}</Text>
         </TouchableOpacity>
-        {showDatePicker && (
-          <DateTimePicker
-            value={date}
-            mode="time"
-            is24Hour={true}
-            display="default"
-            onChange={handleDateChange}
-          />
-        )}
+          {showDatePicker && (
+            <TouchableOpacity style={styles.contenedorHora}>
+              <DateTimePicker
+                value={date}
+                mode="time"
+                is24Hour={true}
+                display="clock"
+                onChange={handleDateChange}
+              />
+            </TouchableOpacity>
+            )}
       </View>
       <View style={styles.inputContainer}>
         <View style={{width: '70%'}}>
-          <Text style={styles.inputTitle}>Today</Text>  
+          <Text style={[styles.inputTitle, {color: darkMode? 'white' : 'black'}]}>Today</Text>  
           <Text style={{color:'#73737370'}}>If you disable today, the task will be considered as tomorrow</Text>
         </View>
         <Switch value={isToday} onValueChange={(value) => setIsToday(value)} />
       </View>
       <View style={styles.inputContainer}>
         <View style={{width: '70%'}}>
-          <Text style={styles.inputTitle}>Alert</Text>
+          <Text style={[styles.inputTitle, {color: darkMode? 'white' : 'black'}]}>Alert</Text>
           <Text style={{color:'#73737370'}}>You will receive an alert at the time you set for this reminder</Text>
         </View> 
           <Switch value={withAlert} onValueChange={(value) => setWithAlert(value)} />
       </View>
-      <TouchableOpacity style={styles.button} onPress={addTodo}>
-        <Text style={{ color: 'white' }}>Done</Text>
+      <TouchableOpacity style={[styles.button, {backgroundColor: darkMode? 'white' : 'black'}]} onPress={addTodo}>
+        <Text style={{color: darkMode? 'black' : 'white'}}>Done</Text>
       </TouchableOpacity>
     </View>
   );
@@ -120,6 +123,11 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#f7f8fa',
         paddingHorizontal: 30,
+    },
+    contenedorHora:{
+      backgroundColor: 'white',
+      borderWidth: 1,
+      borderColor: 'red'
     },
     title: {
         fontSize: 34,

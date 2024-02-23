@@ -23,6 +23,8 @@ export default function Home() {
 
   const [expoPushToken, setExpoPushToken] = useState(false)
   const todos = useSelector(state => state.todos.todos)
+  const nameUser = useSelector((state) => state.profile.nameUser);
+  const darkMode = useSelector((state) => state.profile.darkMode);
   const dispatch = useDispatch()
 
 
@@ -102,11 +104,16 @@ export default function Home() {
   } 
 
   return (
-    <View style={styles.container}>
-      <Image
-        source={{ uri: "https://i.imgur.com/UOVSGbo.png" }}
-        style={styles.pic}
-      />
+    <View style={[styles.container, {backgroundColor: darkMode? '#141414' : 'white'}]}>
+      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
+        <Text style={{color: darkMode? 'white' : 'black', paddingRight: 5}}>Hi, </Text><Text style={{fontWeight: 'bold', color: darkMode? 'white' : 'black'}}>{nameUser}!</Text>
+        <TouchableOpacity onPress={()=> navigation.navigate('Profile')}>
+          <Image
+            source={{ uri: "https://i.imgur.com/UOVSGbo.png" }}
+            style={styles.pic}
+          />
+        </TouchableOpacity>
+      </View>
       <View
         style={{
           flexDirection: "row",
@@ -114,7 +121,7 @@ export default function Home() {
           justifyContent: "space-between",
         }}
       >
-        <Text style={styles.title}>Today</Text>
+        <Text style={[styles.title, {color: darkMode? 'white' : 'black'}]}>Today</Text>
         <TouchableOpacity onPress={handlePress}>
           <Text style={{ color: "#3478f6" }}>
             {isHidden ? "Show Completed" : "Hide Completed"}
@@ -122,7 +129,7 @@ export default function Home() {
         </TouchableOpacity>
       </View>
       <TodoList todosData={todos.filter((todo) => moment(new Date(todo.hour)).isSame(moment(), 'day'))} />
-      <Text style={styles.title}>Tomorrow</Text>
+      <Text style={[styles.title, {color: darkMode? 'white' : 'black'}]}>Tomorrow</Text>
       <TodoList todosData={todos.filter((todo) => moment(new Date(todo.hour)).isAfter(moment(), 'day'))} />
       <TouchableOpacity style={styles.button} onPress={()=> navigation.navigate('Add')}>
         <Text style={styles.plus}>+</Text>
@@ -141,7 +148,8 @@ const styles = StyleSheet.create({
         width: 42,
         height: 42,
         borderRadius: 21,
-        alignSelf: 'flex-end'
+        alignSelf: 'flex-end',
+        marginLeft: 10,
     },
     title: {
         fontSize: 34,
