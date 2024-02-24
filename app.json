@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "toDo",
-    "slug": "toDo",
+    "slug": "todolist",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -25,6 +25,12 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "367f3b67-0359-4c89-a48e-39d99be31474"
+      }
+    },
+    "owner": "toobbb"
   }
 }

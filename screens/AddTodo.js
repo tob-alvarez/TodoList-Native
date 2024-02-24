@@ -30,6 +30,7 @@ const AddTodo = () => {
       await AsyncStorage.setItem('@Todos', JSON.stringify([...listTodos, newTodo]))
       dispatch(addTodoReducer(newTodo))
       console.log('Todo saved correctly')
+      console.log(newTodo)
       if(withAlert){
         await scheduleTodoNotification(newTodo)
       }

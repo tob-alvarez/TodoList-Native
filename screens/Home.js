@@ -5,12 +5,12 @@ import { useNavigation } from '@react-navigation/native';
 import { useDispatch, useSelector } from 'react-redux';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { hideCompletedReducer, setTodosReducer } from '../redux/todosSlice';
-import * as Notications from 'expo-notifications';
+import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import moment from 'moment';
 
 
-Notications.setNotificationHandler({
+Notifications.setNotificationHandler({
   handleNotification: async () =>({
     shouldShowAlert: true,
     shouldPlaySound: true,
@@ -23,37 +23,37 @@ export default function Home() {
 
   const [expoPushToken, setExpoPushToken] = useState(false)
   const todos = useSelector(state => state.todos.todos)
-  const nameUser = useSelector((state) => state.profile.nameUser);
-  const darkMode = useSelector((state) => state.profile.darkMode);
   const dispatch = useDispatch()
-
-
-  useEffect(() => {
-    registerForPushNotificationsAsync().then(token => setExpoPushToken(token))
-    const getTodos = async() =>{
-      try{
-        const todos = await AsyncStorage.getItem('@Todos')
-        if (todos !== null){
-          const todosData = JSON.parse(todos)
-          const todosDataFiltered = todosData.filter(todo => {
-            return moment(new Date(todo.hour)).isSameOrAfter(moment(), 'day')
-          })
-          if(todosDataFiltered !== null){
-            await AsyncStorage.setItem('@Todos', JSON.stringify(todosDataFiltered));
-            console.log('we deleted some passed todos')
-          }
-          dispatch(setTodosReducer(JSON.parse(todosDataFiltered)))
-        }
-      }catch(e){
-        console.log(e)
-      }
-    }
-    getTodos();
-  }, [])
-  
-
   const navigation = useNavigation();
   const [isHidden, setIsHidden] = useState(false)
+  const nameUser = useSelector((state) => state.profile.nameUser);
+
+
+  const getTodos = async() => {
+    try {
+       const todos = await AsyncStorage.getItem('@Todos')
+       console.log('Todos from AsyncStorage:', todos);
+ 
+       if (todos !== null) {
+          const todosData = JSON.parse(todos);
+          console.log('Parsed Todos:', todosData);
+ 
+          const todosDataFiltered = todosData.filter(todo => {
+             return moment(new Date(todo.hour)).isSameOrAfter(moment(), 'day')
+          });
+ 
+          if (todosDataFiltered !== null) {
+             await AsyncStorage.setItem('@Todos', JSON.stringify(todosDataFiltered));
+             console.log('Deleted some passed todos');
+          }
+ 
+          dispatch(setTodosReducer(JSON.parse(todosDataFiltered)));
+       }
+    } catch (e) {
+       console.log('Error in getTodos:', e);
+    }
+ }
+ 
 
   const handlePress = async () => {
     let updatedTodos;
@@ -76,37 +76,49 @@ export default function Home() {
     }
 };
 
-  const registerForPushNotificationsAsync = async () =>{
-    let token;
-    if (Device.isDevice){
-      const {status : existingStatus} = await Notications.getPresentedNotificationsAsync();
-      let finalStatus = existingStatus;
-      if( existingStatus !== 'granted'){
-        const {status} = await Notications.requestPermissionsAsync()
-        finalStatus = status;
-      }
-      if( finalStatus !== 'granted'){
-        alert('Failed to get push token for push notification!')
-        return
-      } 
-      token= (await Notications.getExpoPushTokenAsync()).data;
-      console.log(token)
-    } else { return; }
-    if(Platform.OS === 'android'){
-      Notications.setNotificationChannelAsync('default', {
-        name: 'default',
-        importance: Notications.AndroidImportance.MAX,
-        vibrationPattern: [0, 250, 250, 250],
-        lightColor: '#FF231F7C'
-      })
+const registerForPushNotificationsAsync = async () => {
+  let token;
+  
+  if (Device.isDevice) {
+    const { status: existingStatus } = await Notifications.getPermissionsAsync();
+    let finalStatus = existingStatus;
+
+    if (existingStatus !== 'granted') {
+      const { status } = await Notifications.requestPermissionsAsync();
+      finalStatus = status;
     }
-    return token;
-  } 
+
+    if (finalStatus !== 'granted') {
+      alert('Failed to get push token for push notification!');
+      return;
+    }
+
+    const expoPushToken = await Notifications.getExpoPushTokenAsync({
+      experienceId: '@toobbb/todolist',
+    });
+
+    token = expoPushToken.data;
+    console.log(token);
+  } else {
+    return;
+  }
+
+  if (Platform.OS === 'android') {
+    await Notifications.setNotificationChannelAsync('default', {
+      name: 'default',
+      importance: Notifications.AndroidImportance.MAX,
+      vibrationPattern: [0, 250, 250, 250],
+      lightColor: '#FF231F7C',
+    });
+  }
+
+  return token;
+};
 
   return (
-    <View style={[styles.container, {backgroundColor: darkMode? '#141414' : 'white'}]}>
+    <View style={styles.container}>
       <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
-        <Text style={{color: darkMode? 'white' : 'black', paddingRight: 5}}>Hi, </Text><Text style={{fontWeight: 'bold', color: darkMode? 'white' : 'black'}}>{nameUser}!</Text>
+        <Text style={{paddingRight: 2}}>Hi, </Text><Text style={{fontWeight: 'bold', paddingRight:5}}>{nameUser}!</Text>
         <TouchableOpacity onPress={()=> navigation.navigate('Profile')}>
           <Image
             source={{ uri: "https://i.imgur.com/UOVSGbo.png" }}
@@ -121,7 +133,7 @@ export default function Home() {
           justifyContent: "space-between",
         }}
       >
-        <Text style={[styles.title, {color: darkMode? 'white' : 'black'}]}>Today</Text>
+        <Text style={styles.title}>Today</Text>
         <TouchableOpacity onPress={handlePress}>
           <Text style={{ color: "#3478f6" }}>
             {isHidden ? "Show Completed" : "Hide Completed"}
@@ -129,7 +141,7 @@ export default function Home() {
         </TouchableOpacity>
       </View>
       <TodoList todosData={todos.filter((todo) => moment(new Date(todo.hour)).isSame(moment(), 'day'))} />
-      <Text style={[styles.title, {color: darkMode? 'white' : 'black'}]}>Tomorrow</Text>
+      <Text style={styles.title}>Tomorrow</Text>
       <TodoList todosData={todos.filter((todo) => moment(new Date(todo.hour)).isAfter(moment(), 'day'))} />
       <TouchableOpacity style={styles.button} onPress={()=> navigation.navigate('Add')}>
         <Text style={styles.plus}>+</Text>
@@ -148,8 +160,7 @@ const styles = StyleSheet.create({
         width: 42,
         height: 42,
         borderRadius: 21,
-        alignSelf: 'flex-end',
-        marginLeft: 10,
+        alignSelf: 'flex-end'
     },
     title: {
         fontSize: 34,

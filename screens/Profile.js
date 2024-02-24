@@ -70,6 +70,9 @@ const styles = StyleSheet.create({
         paddingTop: 50,
         paddingHorizontal: 15,
     },
+    dataUserInput:{
+        width: 200
+    },
     picContainer:{
         justifyContent: 'center',
         alignItems: 'center',

@@ -1,50 +1,27 @@
-// App.js
-import React, { useEffect } from 'react';
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Provider, connect } from 'react-redux';
-import { store } from './redux/store';
-import Home from './screens/Home';
-import AddTodo from './screens/AddTodo';
-import Profile from './screens/Profile';
-import { getHeaderStyles } from './styles';
+import Home from "./screens/Home";
+import AddTodo from "./screens/AddTodo";
+import { store, persistor } from "./redux/store";
+import { Provider } from 'react-redux'
+import Profile from "./screens/Profile";
+import { PersistGate } from 'redux-persist/integration/react';
 
 const Stack = createNativeStackNavigator();
 
-const App = ({ darkMode }) => {
-  useEffect(() => {
-    const headerOptions = getHeaderStyles(darkMode);
-
-    Stack.Screen.defaultProps = {
-      ...Stack.Screen.defaultProps,
-      options: headerOptions,
-    };
-  }, [darkMode]);
-
+export default function App() {
   return (
-    <NavigationContainer>
-      <Stack.Navigator
-        screenOptions={({ route }) => {
-          const headerStyles = getHeaderStyles(darkMode);
-          return {
-            ...headerStyles,
-          };
-        }}
-      >
-        <Stack.Screen name='Home' component={Home} options={{headerShown: false}}/>
-        <Stack.Screen name='Add' component={AddTodo} options={{ presentation: 'modal', headerTitle:'' }} />
-        <Stack.Screen name='Profile' component={Profile} options={{ presentation: 'modal' }} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <NavigationContainer>
+          <Stack.Navigator>
+            <Stack.Screen name='Home' component={Home} options={{headerShown: false}}/>
+            <Stack.Screen name='Add' component={AddTodo} options={{presentation: 'modal'}}/>
+            <Stack.Screen name='Profile' component={Profile} options={{presentation: 'modal'}}/>
+          </Stack.Navigator>
+        </NavigationContainer>
+      </PersistGate>
+    </Provider>
   );
-};
+}
 
-const ConnectedApp = connect((state) => ({ darkMode: state.profile.darkMode }))(App);
-
-const RootApp = () => (
-  <Provider store={store}>
-    <ConnectedApp />
-  </Provider>
-);
-
-export default RootApp;
