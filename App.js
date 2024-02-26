@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { NavigationContainer } from '@react-navigation/native';
+import { DarkTheme, NavigationContainer } from '@react-navigation/native';
 import Home from "./screens/Home";
 import AddTodo from "./screens/AddTodo";
 import { store, persistor } from "./redux/store";

@@ -27,6 +27,7 @@ export default function Home() {
   const navigation = useNavigation();
   const [isHidden, setIsHidden] = useState(false)
   const nameUser = useSelector((state) => state.profile.nameUser);
+  const profileImage = useSelector((state) => state.profile.profileImage);
 
 
   const getTodos = async() => {
@@ -121,7 +122,7 @@ const registerForPushNotificationsAsync = async () => {
         <Text style={{paddingRight: 2}}>Hi, </Text><Text style={{fontWeight: 'bold', paddingRight:5}}>{nameUser}!</Text>
         <TouchableOpacity onPress={()=> navigation.navigate('Profile')}>
           <Image
-            source={{ uri: "https://i.imgur.com/UOVSGbo.png" }}
+            source={{ uri: profileImage }}
             style={styles.pic}
           />
         </TouchableOpacity>
