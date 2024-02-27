@@ -154,7 +154,7 @@ const registerForPushNotificationsAsync = async () => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 50,
+        paddingTop: 30,
         paddingHorizontal: 15,
     },
     pic: {
