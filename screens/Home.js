@@ -8,6 +8,7 @@ import { hideCompletedReducer, setTodosReducer } from '../redux/todosSlice';
 import * as Notifications from 'expo-notifications';
 import * as Device from 'expo-device';
 import moment from 'moment';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 
 Notifications.setNotificationHandler({
@@ -28,6 +29,7 @@ export default function Home() {
   const [isHidden, setIsHidden] = useState(false)
   const nameUser = useSelector((state) => state.profile.nameUser);
   const profileImage = useSelector((state) => state.profile.profileImage);
+  const darkMode = useSelector((state) => state.profile.darkMode);
 
 
   const getTodos = async() => {
@@ -78,84 +80,91 @@ export default function Home() {
 };
 
 const registerForPushNotificationsAsync = async () => {
-  let token;
-  
-  if (Device.isDevice) {
+  if (!Device.isDevice) {
+    return;
+  }
+
+  try {
     const { status: existingStatus } = await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
 
     if (existingStatus !== 'granted') {
       const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
 
-    if (finalStatus !== 'granted') {
-      alert('Failed to get push token for push notification!');
-      return;
+      if (status !== 'granted') {
+        alert('Failed to get push token for push notification. Permission not granted.');
+        return;
+      }
     }
 
     const expoPushToken = await Notifications.getExpoPushTokenAsync({
       experienceId: '@toobbb/todolist',
     });
 
-    token = expoPushToken.data;
-    console.log(token);
-  } else {
-    return;
-  }
+    const token = expoPushToken.data;
+    console.log('Expo Push Token:', token);
 
-  if (Platform.OS === 'android') {
-    await Notifications.setNotificationChannelAsync('default', {
-      name: 'default',
-      importance: Notifications.AndroidImportance.MAX,
-      vibrationPattern: [0, 250, 250, 250],
-      lightColor: '#FF231F7C',
-    });
-  }
+    if (Platform.OS === 'android') {
+      await Notifications.setNotificationChannelAsync('default', {
+        name: 'default',
+        importance: Notifications.AndroidImportance.MAX,
+        vibrationPattern: [0, 250, 250, 250],
+        lightColor: '#FF231F7C',
+      });
+    }
 
-  return token;
+    return token;
+  } catch (error) {
+    console.error('Error while registering for push notifications:', error);
+    alert('Failed to get push token for push notification. An error occurred.');
+  }
 };
 
+
   return (
-    <View style={styles.container}>
-      <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
-        <Text style={{paddingRight: 2}}>Hi, </Text><Text style={{fontWeight: 'bold', paddingRight:5}}>{nameUser}!</Text>
-        <TouchableOpacity onPress={()=> navigation.navigate('Profile')}>
-          <Image
-            source={{ uri: profileImage }}
-            style={styles.pic}
-          />
-        </TouchableOpacity>
+    <SafeAreaView style={styles.container}>
+      <View style={[styles.container2, {backgroundColor: darkMode? '#141414' : 'white'}]}>
+          <View style={{flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end'}}>
+            <Text style={ darkMode? {paddingRight: 2,color:'white'} : { paddingRight: 2}}>Hi, </Text><Text style={darkMode? {color:'white',fontWeight: 'bold', paddingRight:5} : {fontWeight: 'bold', paddingRight:5}}>{nameUser}!</Text>
+            <TouchableOpacity onPress={()=> navigation.navigate('Profile')}>
+              <Image
+                source={{ uri: profileImage }}
+                style={styles.pic}
+              />
+            </TouchableOpacity>
+          </View>
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Text style={[styles.title, {color : darkMode ? 'white' : 'black'}]}>Today</Text>
+            <TouchableOpacity onPress={handlePress}>
+              <Text style={{ color: "#3478f6" }}>
+                {isHidden ? "Show Completed" : "Hide Completed"}
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <TodoList todosData={todos.filter((todo) => moment(new Date(todo.hour)).isSame(moment(), 'day'))} />
+          <Text style={[styles.title,, {color : darkMode ? 'white' : 'black'}]}>Tomorrow</Text>
+          <TodoList todosData={todos.filter((todo) => moment(new Date(todo.hour)).isAfter(moment(), 'day'))} />
+          <TouchableOpacity style={[styles.button, {backgroundColor: darkMode? 'white': 'black'}]} onPress={()=> navigation.navigate('Add')}>
+            <Text style={[styles.plus, {color: darkMode? 'black':'white'}]}>+</Text>
+          </TouchableOpacity>
       </View>
-      <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
-        <Text style={styles.title}>Today</Text>
-        <TouchableOpacity onPress={handlePress}>
-          <Text style={{ color: "#3478f6" }}>
-            {isHidden ? "Show Completed" : "Hide Completed"}
-          </Text>
-        </TouchableOpacity>
-      </View>
-      <TodoList todosData={todos.filter((todo) => moment(new Date(todo.hour)).isSame(moment(), 'day'))} />
-      <Text style={styles.title}>Tomorrow</Text>
-      <TodoList todosData={todos.filter((todo) => moment(new Date(todo.hour)).isAfter(moment(), 'day'))} />
-      <TouchableOpacity style={styles.button} onPress={()=> navigation.navigate('Add')}>
-        <Text style={styles.plus}>+</Text>
-      </TouchableOpacity>
-    </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 30,
+    },
+    container2: {
+        flex: 1,
         paddingHorizontal: 15,
+        paddingTop: 10
     },
     pic: {
         width: 42,
@@ -170,9 +179,9 @@ const styles = StyleSheet.create({
         marginTop: 10
     },
     button: {
-        width: 42,
-        height: 42,
-        borderRadius: 21,
+        width: 45,
+        height: 45,
+        borderRadius: 25,
         backgroundColor: '#000',
         position: 'absolute',
         bottom: 50,
@@ -185,11 +194,11 @@ const styles = StyleSheet.create({
         shadowOpacity: .5,
         shadowRadius: 5,
         elevation: 5,
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     plus: {
-        fontSize: 40,
+        fontSize: 30,
         color: '#fff',
-        top: -7
     }
 });

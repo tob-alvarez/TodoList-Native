@@ -16,8 +16,8 @@ export default function App() {
         <NavigationContainer>
           <Stack.Navigator>
             <Stack.Screen name='Home' component={Home} options={{headerShown: false}}/>
-            <Stack.Screen name='Add' component={AddTodo} options={{presentation: 'modal'}}/>
-            <Stack.Screen name='Profile' component={Profile} options={{presentation: 'modal'}}/>
+            <Stack.Screen name='Add' component={AddTodo} options={{presentation: 'modal', headerShown: false}}/>
+            <Stack.Screen name='Profile' component={Profile} options={{presentation: 'modal', headerShown: false}}/>
           </Stack.Navigator>
         </NavigationContainer>
       </PersistGate>

@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { addTodoReducer } from '../redux/todosSlice';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const AddTodo = () => {
   const navigation = useNavigation()
@@ -50,30 +51,33 @@ const AddTodo = () => {
     setShowDatePicker(true);
   };
 
-  const scheduleTodoNotification = async (todo) =>{
+  const scheduleTodoNotification = async (todo) => {
     const trigger = new Date(todo.hour);
-    try{
+  
+    try {
       await Notifications.scheduleNotificationAsync({
-        content:{
-          title: "It's time !",
-          body: todo.text
+        content: {
+          title: "It's time!",
+          body: todo.text,
         },
-        trigger
-      })
-    } catch(error){
-      alert('La hora no es válida')
+        trigger,
+      });
+    } catch (error) {
+      alert('La hora no es válida');
     }
-  }
+  };
+
 
   return (
-    <View style={[styles.container, {backgroundColor: darkMode? '#141414' : 'white'}]}>
+    <SafeAreaView style={styles.container}>
+      <View style={[styles.container2, {backgroundColor: darkMode? '#141414' : 'white'}]}>
       <Text style={[styles.title, {color: darkMode? 'white' : 'black'}]}>Add Task</Text>
       <View style={styles.inputContainer}>
         <Text style={[styles.inputTitle, {color: darkMode? 'white' : 'black'}]}>Name</Text>
         <TextInput
-          style={[styles.textInput, {color: darkMode? 'white' : 'black'}]}
-          placeholder="Task"
-          placeholderTextColor="#00000030"
+          style={[styles.textInput, {color: darkMode? 'white' : 'black', borderBottomColor: darkMode? '#FFFFFF70':'#00000030'}]}
+          placeholder="Task..."
+          placeholderTextColor={darkMode? '#73737370' : 'black'}
           onChangeText={(text) => {
             setName(text);
           }}
@@ -82,7 +86,7 @@ const AddTodo = () => {
       <View style={styles.inputContainer}>
         <Text style={[styles.inputTitle, {color: darkMode? 'white' : 'black'}]}>Hour</Text>
         <TouchableOpacity onPress={showDatepicker}>
-          <Text>{date.toLocaleTimeString()}</Text>
+          <Text style={{color: darkMode? 'white' : 'black'}}>{date.toLocaleTimeString()}</Text>
         </TouchableOpacity>
           {showDatePicker && (
             <TouchableOpacity style={styles.contenedorHora}>
@@ -113,7 +117,8 @@ const AddTodo = () => {
       <TouchableOpacity style={[styles.button, {backgroundColor: darkMode? 'white' : 'black'}]} onPress={addTodo}>
         <Text style={{color: darkMode? 'black' : 'white'}}>Done</Text>
       </TouchableOpacity>
-    </View>
+      </View>
+    </SafeAreaView>
   );
 };
 
@@ -122,13 +127,14 @@ export default AddTodo
 const styles = StyleSheet.create({
     container:{
         flex: 1,
-        backgroundColor: '#f7f8fa',
-        paddingHorizontal: 30,
     },
+    container2: {
+      flex: 1,
+      paddingHorizontal: 30,
+      paddingTop: 10
+  },
     contenedorHora:{
       backgroundColor: 'white',
-      borderWidth: 1,
-      borderColor: 'red'
     },
     title: {
         fontSize: 34,
@@ -142,7 +148,6 @@ const styles = StyleSheet.create({
         lineHeight: 24
     },
     textInput:{
-        borderBottomColor: '#00000030',
         borderBottomWidth: 1,
         width: '80%'
     },

@@ -3,6 +3,7 @@ import { Image, StyleSheet, Text, TouchableOpacity, View, TextInput, Switch } fr
 import { launchImageLibraryAsync } from 'expo-image-picker';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProfileImage, updateNameUser, toggleDarkMode } from '../redux/profileSlice';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const Profile = () => {
     const dispatch = useDispatch();
@@ -32,7 +33,8 @@ const Profile = () => {
     };
 
     return (
-        <View style={[styles.container, {backgroundColor: darkMode ? '#141414' : 'white',}]}>
+        <SafeAreaView style={styles.container}>
+            <View style={[styles.container2, {backgroundColor: darkMode? '#141414' : 'white'}]}>
             <View style={styles.picContainer}>
                 <TouchableOpacity onPress={handleEdit}>
                     <Image source={{ uri: profileImage }} style={styles.pic} />
@@ -58,7 +60,8 @@ const Profile = () => {
                     thumbColor={darkMode ? "#f5dd4b" : "#f4f3f4"}
                 />
             </View>
-        </View>
+            </View>
+        </SafeAreaView>
     );
 };
 
@@ -67,8 +70,11 @@ export default Profile
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingTop: 50,
+    },
+    container2: {
+        flex: 1,
         paddingHorizontal: 15,
+        paddingTop: 10
     },
     dataUserInput:{
         width: 200
@@ -77,12 +83,15 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 50,
+        paddingTop: 50,
     },
     pic: {
         width: 150,
         height: 150,
         borderRadius: 100,
         marginBottom: 30,
+        borderWidth: 2,
+        borderColor: 'black'
     },
     userInfoContainer:{
         margin: 20,
