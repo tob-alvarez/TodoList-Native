@@ -41,7 +41,6 @@ With TobDo-List, simplify your daily life by keeping your tasks organized and en
 
 ## Features
 
-- Light/dark mode toggle (soon)
-- Profile edit (soon)
-- Firebase integration
+- Light/dark mode toggle
+- Profile edit
 
