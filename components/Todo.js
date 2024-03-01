@@ -12,6 +12,7 @@ const Todo = ({id, text, isCompleted, isToday, hour}) => {
   const [localHour, setLocalHour] = useState(new Date(hour))
   const [thisTodoIsToday, setThisTodoIsToday] = hour ? useState(moment(new Date(hour)).isSame(moment(), 'day')) : useState(false)
   const todos = useSelector(state => state.todos.todos)
+  const darkMode = useSelector(state => state.profile.darkMode)
   const dispatch = useDispatch()
   const handleDeleteTodo = async() =>{
     dispatch(deleteTodoReducer(id))
@@ -35,7 +36,7 @@ const Todo = ({id, text, isCompleted, isToday, hour}) => {
       </View>
       </View>
       <TouchableOpacity onPress={handleDeleteTodo} style={{alignItems: 'center'}}>
-        <EvilIcons name="trash" size={30} color="#73737340" />
+        <EvilIcons name="trash" size={30} color={darkMode ? "#ffffff40":"#73737350"} />
       </TouchableOpacity>
     </SafeAreaView>
   )
@@ -53,10 +54,12 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 15,
         fontWeight: '500',
-        color: '#737373'
-    },
-    text2: {
+        color: '#737373',
+        width: 250,
+      },
+      text2: {
         fontSize: 15,
+        width: 250,
         fontWeight: '500',
         color: '#73737330',
         textDecorationLine: 'line-through',
